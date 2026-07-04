@@ -1,0 +1,10 @@
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# 환경변수 — 키 커밋 금지
+.env
+.env.local
+.env*.local

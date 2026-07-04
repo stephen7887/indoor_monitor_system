@@ -1,0 +1,60 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img [ref=e6]
+          - generic [ref=e8]:
+            - heading "소방관 진출입 관제" [level=1] [ref=e9]
+            - paragraph [ref=e10]: BLE 진출입 감지 · 실시간
+        - generic [ref=e11]:
+          - paragraph [ref=e12]: 실시간 끊김
+          - paragraph [ref=e14]: 15시 33분 15초
+          - button "라이트 테마로 전환 (야외)" [ref=e15] [cursor=pointer]:
+            - img [ref=e16]
+    - main [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - generic [ref=e25]:
+            - img [ref=e26]
+            - paragraph [ref=e31]: 내부 인원
+          - paragraph [ref=e32]: –
+        - generic [ref=e33]:
+          - generic [ref=e34]:
+            - img [ref=e35]
+            - paragraph [ref=e37]: 미퇴장 경보
+          - paragraph [ref=e38]: –
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - img [ref=e41]
+            - paragraph [ref=e43]: 24시간 이벤트
+          - paragraph [ref=e44]: –
+        - generic [ref=e45]:
+          - generic [ref=e46]:
+            - img [ref=e47]
+            - paragraph [ref=e54]: 현장 통신
+          - paragraph [ref=e55]: 미수신
+      - generic [ref=e56]:
+        - region "현재 내부 인원" [ref=e58]:
+          - generic [ref=e59]:
+            - heading "내부 인원" [level=2] [ref=e60]
+            - paragraph [ref=e61]: 진입 후 미퇴장 대원 · 25분 초과 시 경보
+          - generic [ref=e62]:
+            - img [ref=e63]
+            - paragraph [ref=e66]: 내부 인원 없음 — 전 대원 외부
+        - generic [ref=e67]:
+          - region "미퇴장 경보" [ref=e68]:
+            - generic [ref=e69]:
+              - heading "미퇴장 경보" [level=2] [ref=e70]
+              - generic [ref=e71]: 0건
+            - generic [ref=e72]:
+              - img [ref=e73]
+              - paragraph [ref=e76]: 25분 초과 미퇴장 대원 없음
+          - region "진출입 이벤트 피드" [ref=e77]:
+            - generic [ref=e78]:
+              - heading "실시간 진출입" [level=2] [ref=e79]
+              - paragraph [ref=e80]: 최근 50건
+            - generic [ref=e81]:
+              - img [ref=e82]
+              - paragraph [ref=e85]: 최근 24시간 이벤트 없음
+  - alert [ref=e86]
