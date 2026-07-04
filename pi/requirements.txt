@@ -1,0 +1,6 @@
+numpy
+scipy
+pandas
+pyserial
+supabase>=2.0
+python-dotenv
