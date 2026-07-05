@@ -12,6 +12,11 @@ export function fmtElapsed(ms: number): string {
   return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
 }
 
+/** 경과 → 60초 미만 "SS초 전", 이상 "M분 SS초 전" */
 export function fmtSecondsAgo(ms: number): string {
-  return `${Math.max(0, Math.round(ms / 1000))}초 전`;
+  const total = Math.max(0, Math.round(ms / 1000));
+  if (total < 60) return `${total}초 전`;
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return s > 0 ? `${m}분 ${s}초 전` : `${m}분 전`;
 }

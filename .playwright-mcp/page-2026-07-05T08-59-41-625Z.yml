@@ -1,0 +1,62 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img [ref=e6]
+          - generic [ref=e8]:
+            - heading "소방관 진출입 관제" [level=1] [ref=e9]
+            - paragraph [ref=e10]: BLE 진출입 감지 · 실시간
+        - generic [ref=e11]:
+          - paragraph [ref=e12]: 서버 끊김
+          - paragraph [ref=e14]: 17시 59분 41초
+          - button "경보음 끄기" [ref=e15] [cursor=pointer]:
+            - img [ref=e16]
+          - button "라이트 테마로 전환 (야외)" [ref=e20] [cursor=pointer]:
+            - img [ref=e21]
+    - main [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - img [ref=e31]
+            - paragraph [ref=e36]: 내부 인원
+          - paragraph [ref=e37]: –
+        - generic [ref=e38]:
+          - generic [ref=e39]:
+            - img [ref=e40]
+            - paragraph [ref=e42]: 미퇴장 경보
+          - paragraph [ref=e43]: –
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - img [ref=e46]
+            - paragraph [ref=e48]: 24시간 이벤트
+          - paragraph [ref=e49]: –
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - img [ref=e52]
+            - paragraph [ref=e59]: 현장 통신
+          - paragraph [ref=e60]: 미수신
+      - generic [ref=e61]:
+        - region "현재 내부 인원" [ref=e63]:
+          - generic [ref=e64]:
+            - heading "내부 인원" [level=2] [ref=e65]
+            - paragraph [ref=e66]: 진입 후 미퇴장 대원 · 25분 초과 시 경보
+          - generic [ref=e68]:
+            - img [ref=e69]
+            - paragraph [ref=e72]: 내부 인원 없음 — 전 대원 외부
+        - generic [ref=e73]:
+          - region "미퇴장 경보" [ref=e74]:
+            - generic [ref=e75]:
+              - heading "미퇴장 경보" [level=2] [ref=e76]
+              - generic [ref=e77]: 0건
+            - generic [ref=e79]:
+              - img [ref=e80]
+              - paragraph [ref=e83]: 25분 초과 미퇴장 대원 없음
+          - region "진출입 이벤트 피드" [ref=e84]:
+            - generic [ref=e85]:
+              - heading "실시간 진출입" [level=2] [ref=e86]
+              - paragraph [ref=e87]: 최근 50건
+            - generic [ref=e88]:
+              - img [ref=e89]
+              - paragraph [ref=e92]: 최근 24시간 이벤트 없음
+  - alert [ref=e93]

@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { AlertTriangle, ShieldCheck } from "lucide-react";
 import { fmtElapsed, fmtTime } from "@/lib/format";
+import { StaleStamp } from "@/components/OccupantList";
 import { ALERT_LIMIT_MIN, ALERT_LIMIT_MS } from "@/lib/occupancy";
 import type { Occupant } from "@/lib/types";
 
@@ -10,9 +11,11 @@ interface Props {
   /** 진입 후 25분 초과 대원 (entry detected_at 기준, DB 데이터로 계산) */
   overdue: Occupant[];
   now: number | null;
+  /** 통신 지연/두절 시 마지막 하트비트 수신 시각(epoch ms) — 카드 흐림 + 기준 시점 표시 */
+  staleSince?: number | null;
 }
 
-export function AlertPanel({ overdue, now }: Props) {
+export function AlertPanel({ overdue, now, staleSince }: Props) {
   const reduceMotion = useReducedMotion();
 
   return (
@@ -34,6 +37,13 @@ export function AlertPanel({ overdue, now }: Props) {
         </span>
       </div>
 
+      {staleSince != null && <StaleStamp since={staleSince} />}
+
+      <div
+        className={`transition-opacity duration-300 ${
+          staleSince != null ? "opacity-60" : ""
+        }`}
+      >
       {overdue.length === 0 ? (
         <div className="flex items-center gap-3 rounded-lg bg-surface-2 px-4 py-6">
           <ShieldCheck className="h-6 w-6 shrink-0 text-ok" aria-hidden />
@@ -91,6 +101,7 @@ export function AlertPanel({ overdue, now }: Props) {
           })}
         </ul>
       )}
+      </div>
     </section>
   );
 }

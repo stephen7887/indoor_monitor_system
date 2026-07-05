@@ -1,0 +1,227 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e4]:
+      - navigation [ref=e5]:
+        - generic [ref=e6]:
+          - img [ref=e7]
+          - text: Gwangju Security
+        - generic [ref=e10]:
+          - link "Pricing" [ref=e11] [cursor=pointer]:
+            - /url: /pricing
+          - link "Why Us" [ref=e12] [cursor=pointer]:
+            - /url: /why-trust
+          - button "Enable scan notifications" [ref=e14]:
+            - img [ref=e15]
+          - group "Language" [ref=e18]:
+            - button "EN" [pressed] [ref=e19] [cursor=pointer]
+            - generic [ref=e20]: "|"
+            - button "KO" [ref=e21] [cursor=pointer]
+          - button "Sign in" [ref=e22]:
+            - img [ref=e23]
+            - text: Sign in
+      - generic [ref=e26]:
+        - generic [ref=e28]:
+          - generic [ref=e29]: MCP Agent
+          - heading "AI-Native Security" [level=1] [ref=e31]:
+            - text: AI-Native
+            - text: Security
+          - paragraph [ref=e32]: for Indie Devs
+          - paragraph [ref=e33]: Scan for security issues and get AI fixes instantly. One click. No config. Ship safe.
+          - generic [ref=e34]:
+            - tablist "Scan type" [ref=e35]:
+              - tab "URL Scan" [selected] [ref=e36] [cursor=pointer]:
+                - img [ref=e37]
+                - text: URL Scan
+              - tab "GitHub Repo" [ref=e40] [cursor=pointer]:
+                - img [ref=e41]
+                - text: GitHub Repo
+            - generic [ref=e44]:
+              - generic [ref=e45]: ▸
+              - textbox "URL to scan" [ref=e46]:
+                - /placeholder: Enter URL to scan...
+              - button "Loading..." [disabled] [ref=e47]
+        - generic [ref=e53]:
+          - generic [ref=e54]: scroll to scan
+          - img [ref=e55]
+        - generic [ref=e57]:
+          - paragraph [ref=e58]: // what it does
+          - heading "How It Works" [level=2] [ref=e59]
+          - generic [ref=e60]:
+            - article [ref=e61]:
+              - img [ref=e62]
+              - generic [ref=e65]: 10K+
+              - heading "Vulnerability Scanning" [level=3] [ref=e66]
+              - paragraph [ref=e67]: Deep analysis of your codebase for security vulnerabilities using AI-powered detection.
+            - article [ref=e68]:
+              - img [ref=e69]
+              - generic [ref=e72]: 0 leaks
+              - heading "API Key Detection" [level=3] [ref=e73]
+              - paragraph [ref=e74]: Find exposed secrets, API keys, and credentials before they become a breach.
+            - article [ref=e75]:
+              - img [ref=e76]
+              - generic [ref=e79]: 1-click
+              - heading "AI Fix + Auto PR" [level=3] [ref=e80]
+              - paragraph [ref=e81]: AI analyzes root cause, generates fix code, and creates a GitHub PR — all in one click.
+            - article [ref=e82]:
+              - img [ref=e83]
+              - generic [ref=e86]: 8 tools
+              - heading "MCP Agent" [level=3] [ref=e87]
+              - paragraph [ref=e88]: Integrate Gwangju Security into Claude Code or Cursor. Run scans without leaving your IDE.
+              - link "Set Up →" [ref=e89] [cursor=pointer]:
+                - /url: /mcp
+        - generic [ref=e91]:
+          - generic [ref=e92]:
+            - paragraph [ref=e93]: // live demo
+            - heading "See it in action" [level=2] [ref=e94]
+            - paragraph [ref=e95]: One command. Gwangju Security crawls your project, flags exposed secrets and vulnerable patterns, then writes the fix — while you keep shipping.
+          - generic [ref=e101]: gwangju_scan.sh
+        - generic [ref=e104]:
+          - paragraph [ref=e105]: // How It Works
+          - heading "How It Works" [level=2] [ref=e106]
+          - generic [ref=e107]:
+            - generic [ref=e108]:
+              - generic [ref=e109]: "01"
+              - img [ref=e110]
+              - heading "Enter URL or Repo" [level=3] [ref=e113]
+              - paragraph [ref=e114]: Paste any website URL or GitHub repository. No setup, no CLI, no config files.
+            - generic [ref=e115]:
+              - generic [ref=e116]: "02"
+              - img [ref=e117]
+              - heading "AI Scans 10,000+ Patterns" [level=3] [ref=e120]
+              - paragraph [ref=e121]: Nuclei DAST, Semgrep SAST, Gitleaks secrets, and dependency audit — all at once.
+            - generic [ref=e122]:
+              - generic [ref=e123]: "03"
+              - img [ref=e124]
+              - heading "Get Fix Code + PR" [level=3] [ref=e126]
+              - paragraph [ref=e127]: AI generates fix code with before/after diffs and can open a GitHub PR automatically.
+        - generic [ref=e128]:
+          - paragraph [ref=e129]: // Gwangju Security vs. Alternatives
+          - heading "Gwangju Security vs. Alternatives" [level=2] [ref=e130]
+          - table [ref=e132]:
+            - rowgroup [ref=e133]:
+              - row "Feature Gwangju Security Copilot Cursor Mobb Snyk" [ref=e134]:
+                - columnheader "Feature" [ref=e135]
+                - columnheader "Gwangju Security" [ref=e136]
+                - columnheader "Copilot" [ref=e137]
+                - columnheader "Cursor" [ref=e138]
+                - columnheader "Mobb" [ref=e139]
+                - columnheader "Snyk" [ref=e140]
+            - rowgroup [ref=e141]:
+              - row "URL Scan (DAST) — — — —" [ref=e142]:
+                - cell "URL Scan (DAST)" [ref=e143]
+                - cell [ref=e144]:
+                  - img [ref=e145]
+                - cell "—" [ref=e147]
+                - cell "—" [ref=e148]
+                - cell "—" [ref=e149]
+                - cell "—" [ref=e150]
+              - row "Vulnerability Scan — —" [ref=e151]:
+                - cell "Vulnerability Scan" [ref=e152]
+                - cell [ref=e153]:
+                  - img [ref=e154]
+                - cell "—" [ref=e156]
+                - cell "—" [ref=e157]
+                - cell [ref=e158]:
+                  - img [ref=e159]
+                - cell [ref=e161]:
+                  - img [ref=e162]
+              - row "Secret Detection — —" [ref=e164]:
+                - cell "Secret Detection" [ref=e165]
+                - cell [ref=e166]:
+                  - img [ref=e167]
+                - cell "—" [ref=e169]
+                - cell "—" [ref=e170]
+                - cell [ref=e171]:
+                  - img [ref=e172]
+                - cell [ref=e174]:
+                  - img [ref=e175]
+              - row "AI Fix Code —" [ref=e177]:
+                - cell "AI Fix Code" [ref=e178]
+                - cell [ref=e179]:
+                  - img [ref=e180]
+                - cell [ref=e182]:
+                  - img [ref=e183]
+                - cell [ref=e185]:
+                  - img [ref=e186]
+                - cell [ref=e188]:
+                  - img [ref=e189]
+                - cell "—" [ref=e191]
+              - row "Auto-Fix PR — — —" [ref=e192]:
+                - cell "Auto-Fix PR" [ref=e193]
+                - cell [ref=e194]:
+                  - img [ref=e195]
+                - cell "—" [ref=e197]
+                - cell "—" [ref=e198]
+                - cell [ref=e199]:
+                  - img [ref=e200]
+                - cell "—" [ref=e202]
+              - row "Scheduled Scans — —" [ref=e203]:
+                - cell "Scheduled Scans" [ref=e204]
+                - cell [ref=e205]:
+                  - img [ref=e206]
+                - cell "—" [ref=e208]
+                - cell "—" [ref=e209]
+                - cell [ref=e210]:
+                  - img [ref=e211]
+                - cell [ref=e213]:
+                  - img [ref=e214]
+              - row "MCP / IDE Integration — — —" [ref=e216]:
+                - cell "MCP / IDE Integration" [ref=e217]
+                - cell [ref=e218]:
+                  - img [ref=e219]
+                - cell "—" [ref=e221]
+                - cell "—" [ref=e222]
+                - cell [ref=e223]:
+                  - img [ref=e224]
+                - cell "—" [ref=e226]
+              - row "Free Tier — —" [ref=e227]:
+                - cell "Free Tier" [ref=e228]
+                - cell [ref=e229]:
+                  - img [ref=e230]
+                - cell "—" [ref=e232]
+                - cell "—" [ref=e233]
+                - cell [ref=e234]:
+                  - img [ref=e235]
+                - cell [ref=e237]:
+                  - img [ref=e238]
+          - paragraph [ref=e240]:
+            - link "Learn more about our security approach →" [ref=e241] [cursor=pointer]:
+              - /url: /why-trust
+        - generic [ref=e243]:
+          - generic [ref=e244]:
+            - generic [ref=e245]: 10,000+
+            - generic [ref=e246]: Vulnerability Templates
+          - generic [ref=e247]:
+            - generic [ref=e248]: 37+
+            - generic [ref=e249]: Detection Patterns
+          - generic [ref=e250]:
+            - generic [ref=e251]: "8"
+            - generic [ref=e252]: MCP Tools
+          - generic [ref=e253]:
+            - generic [ref=e254]: <2 min
+            - generic [ref=e255]: Average Scan Time
+        - generic [ref=e256]:
+          - heading "Try a URL scan in 30 seconds" [level=2] [ref=e257]
+          - paragraph [ref=e258]: No signup needed. Just paste a link.
+          - generic [ref=e259]:
+            - button "Start Free Scan ↑" [ref=e260] [cursor=pointer]:
+              - img [ref=e261]
+              - text: Start Free Scan ↑
+            - link "View Pricing →" [ref=e263] [cursor=pointer]:
+              - /url: /pricing
+        - generic [ref=e264]:
+          - paragraph [ref=e265]: © 2026 Gwangju Security · stones-lab
+          - generic [ref=e266]:
+            - link "Pricing" [ref=e267] [cursor=pointer]:
+              - /url: /pricing
+            - link "Why Us" [ref=e268] [cursor=pointer]:
+              - /url: /why-trust
+            - link "Terms" [ref=e269] [cursor=pointer]:
+              - /url: /terms
+            - link "Privacy" [ref=e270] [cursor=pointer]:
+              - /url: /privacy
+            - link "GitHub" [ref=e271] [cursor=pointer]:
+              - /url: https://github.com/stones-lab
+              - img [ref=e272]
+  - button "Open Next.js Dev Tools" [ref=e280] [cursor=pointer]:
+    - img [ref=e281]

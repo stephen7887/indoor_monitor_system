@@ -6,8 +6,9 @@ export const ALERT_LIMIT_MS = ALERT_LIMIT_MIN * 60 * 1000;
 // 경보 전 주의 단계 (표시 색상용)
 export const WARN_LIMIT_MS = 20 * 60 * 1000;
 
-// heartbeats.last_seen 지연 허용치 — 초과 시 "현장 통신 두절"
+// heartbeats.last_seen 지연 2단계 — 60초~180초 '통신 지연'(KPI만), 180초 초과 '통신 두절'(점멸 배너)
 export const HEARTBEAT_STALE_MS = 60 * 1000;
+export const HEARTBEAT_LOST_MS = 180 * 1000;
 
 /**
  * 태그별 최신 이벤트가 entry면 내부 인원으로 판정.
@@ -35,6 +36,7 @@ export function computeOccupants(
       tagMac: mac,
       name: ff?.name ?? mac,
       team: ff?.team ?? null,
+      registered: ff != null,
       enteredAt: Date.parse(ev.detected_at),
     });
   }

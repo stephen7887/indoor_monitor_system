@@ -1,5 +1,23 @@
 {
   "version": 1,
-  "computedAt": 1783145918787,
-  "entries": []
+  "computedAt": 1783240434356,
+  "entries": [
+    {
+      "id": "mem-0",
+      "content": "- [Supabase 프로젝트 상태](supabase-project-state.md) — ref rcrczfjvkgutnotyvbxm, anon GRANT 누락 이슈 해결 이력\n",
+      "summary": "- [Supabase 프로젝트 상태](supabase-project-state.md) — ref rcrczfjvkgutnotyvbxm, anon GRANT 누락 이슈 해결 이력",
+      "category": "memory",
+      "confidence": 0.5,
+      "words": [
+        "supabase",
+        "supabase",
+        "project",
+        "state",
+        "ref",
+        "rcrczfjvkgutnotyvbxm",
+        "anon",
+        "grant"
+      ]
+    }
+  ]
 }

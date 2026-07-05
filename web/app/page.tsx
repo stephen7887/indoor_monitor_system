@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Activity,
   AlertTriangle,
@@ -11,13 +11,16 @@ import {
 import { AlertPanel } from "@/components/AlertPanel";
 import { ConnectionBanner } from "@/components/ConnectionBanner";
 import { EventFeed } from "@/components/EventFeed";
+import { MuteToggle } from "@/components/MuteToggle";
 import { OccupantList } from "@/components/OccupantList";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAlertSound } from "@/hooks/useAlertSound";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useNow } from "@/hooks/useNow";
 import {
   ALERT_LIMIT_MS,
   computeOccupants,
+  HEARTBEAT_LOST_MS,
   HEARTBEAT_STALE_MS,
 } from "@/lib/occupancy";
 import { supabaseConfigured } from "@/lib/supabase";
@@ -41,14 +44,50 @@ function Dashboard() {
       ? []
       : occupants.filter((o) => now - o.enteredAt >= ALERT_LIMIT_MS);
 
-  const staleCount =
-    now == null
-      ? 0
-      : heartbeats.filter(
-          (hb) => now - Date.parse(hb.last_seen) >= HEARTBEAT_STALE_MS,
-        ).length;
-  const commStatus: "ok" | "danger" | "none" =
-    heartbeats.length === 0 ? "none" : staleCount > 0 ? "danger" : "ok";
+  // 미퇴장 경보음 — 음소거 상태는 localStorage에 유지
+  const [muted, setMuted] = useState(false);
+  useEffect(() => {
+    try {
+      setMuted(localStorage.getItem("alert-muted") === "1");
+    } catch {
+      // localStorage 차단 환경 — 기본값(소리 켬) 유지
+    }
+  }, []);
+  const toggleMuted = () =>
+    setMuted((m) => {
+      const next = !m;
+      try {
+        localStorage.setItem("alert-muted", next ? "1" : "0");
+      } catch {
+        // 저장 실패해도 세션 내 토글은 동작
+      }
+      return next;
+    });
+  useAlertSound(
+    overdue.map((o) => o.tagMac),
+    muted,
+  );
+
+  // 가장 오래 침묵한 Pi 기준(보수적) — 하나라도 끊기면 그 시점 이후 이벤트가 누락됐을 수 있다
+  const oldestSeen =
+    heartbeats.length === 0
+      ? null
+      : Math.min(...heartbeats.map((hb) => Date.parse(hb.last_seen)));
+  const staleness =
+    now == null || oldestSeen == null ? null : now - oldestSeen;
+  const commStatus: "ok" | "delayed" | "lost" | "none" =
+    oldestSeen == null
+      ? "none"
+      : staleness == null
+        ? "ok"
+        : staleness >= HEARTBEAT_LOST_MS
+          ? "lost"
+          : staleness >= HEARTBEAT_STALE_MS
+            ? "delayed"
+            : "ok";
+  // 지연/두절이면 내부 인원·경보 카드에 "마지막 수신 기준" 스탬프 + 흐림 처리
+  const staleSince =
+    commStatus === "delayed" || commStatus === "lost" ? oldestSeen : null;
 
   return (
     <div className="min-h-dvh">
@@ -70,7 +109,7 @@ function Dashboard() {
           <div className="flex shrink-0 items-center gap-3">
             <p
               className="hidden text-sm font-medium text-muted sm:flex sm:items-center sm:gap-2"
-              aria-label={`실시간 연결 ${
+              aria-label={`서버 연결 ${
                 realtime === "connected" ? "정상" : realtime === "connecting" ? "연결 중" : "끊김"
               }`}
             >
@@ -85,16 +124,17 @@ function Dashboard() {
                 }`}
               />
               {realtime === "connected"
-                ? "실시간 연결됨"
+                ? "서버 연결됨"
                 : realtime === "connecting"
                   ? "연결 중"
-                  : "실시간 끊김"}
+                  : "서버 끊김"}
             </p>
             <p className="text-lg font-bold tabular-nums">
               {now == null
                 ? "--:--:--"
                 : new Date(now).toLocaleTimeString("ko-KR", { hour12: false })}
             </p>
+            <MuteToggle muted={muted} onToggle={toggleMuted} />
             <ThemeToggle />
           </div>
         </div>
@@ -137,26 +177,30 @@ function Dashboard() {
             value={
               commStatus === "none"
                 ? "미수신"
-                : commStatus === "danger"
+                : commStatus === "lost"
                   ? "두절"
-                  : "정상"
+                  : commStatus === "delayed"
+                    ? "지연"
+                    : "정상"
             }
             tone={
               commStatus === "none"
                 ? "neutral"
-                : commStatus === "danger"
+                : commStatus === "lost"
                   ? "danger"
-                  : "ok"
+                  : commStatus === "delayed"
+                    ? "warn"
+                    : "ok"
             }
           />
         </div>
 
         <div className="grid gap-4 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <OccupantList occupants={occupants} now={now} />
+            <OccupantList occupants={occupants} now={now} staleSince={staleSince} />
           </div>
           <div className="space-y-4">
-            <AlertPanel overdue={overdue} now={now} />
+            <AlertPanel overdue={overdue} now={now} staleSince={staleSince} />
             <EventFeed events={events} firefighters={firefighters} />
           </div>
         </div>

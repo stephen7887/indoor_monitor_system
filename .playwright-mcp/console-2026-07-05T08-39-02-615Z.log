@@ -1,0 +1,6 @@
+[     415ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/39c1c_next_dist_2497308a._.js:2287
+[     569ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/39c1c_next_dist_2497308a._.js:2287
+[     818ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/39c1c_next_dist_2497308a._.js:2287
+[     865ms] [ERROR] Loading the script 'https://va.vercel-scripts.com/v1/script.debug.js' violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' https://us-assets.i.posthog.com https://cdn.paddle.com". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked. @ http://localhost:3000/_next/static/chunks/39c1c_d6689a88._.js:1879
+[     921ms] [LOG] [Vercel Web Analytics] Failed to load script from https://va.vercel-scripts.com/v1/script.debug.js. Please check if any ad blockers are enabled and try again. @ http://localhost:3000/_next/static/chunks/39c1c_next_dist_2497308a._.js:2287
+[    1455ms] [LOG] [Fast Refresh] done in 785ms @ http://localhost:3000/_next/static/chunks/39c1c_next_dist_2497308a._.js:2287

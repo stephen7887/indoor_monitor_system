@@ -32,5 +32,6 @@ export interface Occupant {
   tagMac: string;
   name: string;
   team: string | null;
+  registered: boolean; // firefighters에 등록된 태그인지 (false면 name = tag_mac)
   enteredAt: number; // epoch ms (events.detected_at)
 }

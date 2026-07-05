@@ -1,0 +1,62 @@
+- generic [active] [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - banner [ref=f1e3]:
+      - generic [ref=f1e4]:
+        - generic [ref=f1e5]:
+          - img [ref=f1e6]
+          - generic [ref=f1e8]:
+            - heading "소방관 진출입 관제" [level=1] [ref=f1e9]
+            - paragraph [ref=f1e10]: BLE 진출입 감지 · 실시간
+        - generic [ref=f1e11]:
+          - paragraph [ref=f1e12]: 실시간 끊김
+          - paragraph [ref=f1e14]: 17시 39분 18초
+          - button "경보음 끄기" [ref=f1e15] [cursor=pointer]:
+            - img [ref=f1e16]
+          - button "라이트 테마로 전환 (야외)" [ref=f1e20] [cursor=pointer]:
+            - img [ref=f1e21]
+    - main [ref=f1e27]:
+      - generic [ref=f1e28]:
+        - generic [ref=f1e29]:
+          - generic [ref=f1e30]:
+            - img [ref=f1e31]
+            - paragraph [ref=f1e36]: 내부 인원
+          - paragraph [ref=f1e37]: –
+        - generic [ref=f1e38]:
+          - generic [ref=f1e39]:
+            - img [ref=f1e40]
+            - paragraph [ref=f1e42]: 미퇴장 경보
+          - paragraph [ref=f1e43]: –
+        - generic [ref=f1e44]:
+          - generic [ref=f1e45]:
+            - img [ref=f1e46]
+            - paragraph [ref=f1e48]: 24시간 이벤트
+          - paragraph [ref=f1e49]: –
+        - generic [ref=f1e50]:
+          - generic [ref=f1e51]:
+            - img [ref=f1e52]
+            - paragraph [ref=f1e59]: 현장 통신
+          - paragraph [ref=f1e60]: 미수신
+      - generic [ref=f1e61]:
+        - region "현재 내부 인원" [ref=f1e63]:
+          - generic [ref=f1e64]:
+            - heading "내부 인원" [level=2] [ref=f1e65]
+            - paragraph [ref=f1e66]: 진입 후 미퇴장 대원 · 25분 초과 시 경보
+          - generic [ref=f1e67]:
+            - img [ref=f1e68]
+            - paragraph [ref=f1e71]: 내부 인원 없음 — 전 대원 외부
+        - generic [ref=f1e72]:
+          - region "미퇴장 경보" [ref=f1e73]:
+            - generic [ref=f1e74]:
+              - heading "미퇴장 경보" [level=2] [ref=f1e75]
+              - generic [ref=f1e76]: 0건
+            - generic [ref=f1e77]:
+              - img [ref=f1e78]
+              - paragraph [ref=f1e81]: 25분 초과 미퇴장 대원 없음
+          - region "진출입 이벤트 피드" [ref=f1e82]:
+            - generic [ref=f1e83]:
+              - heading "실시간 진출입" [level=2] [ref=f1e84]
+              - paragraph [ref=f1e85]: 최근 50건
+            - generic [ref=f1e86]:
+              - img [ref=f1e87]
+              - paragraph [ref=f1e90]: 최근 24시간 이벤트 없음
+  - alert [ref=f1e91]

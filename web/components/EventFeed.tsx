@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeftFromLine, ArrowRightToLine, Inbox } from "lucide-react";
 import { fmtTime } from "@/lib/format";
+import { UnregisteredBadge } from "@/components/OccupantList";
 import type { FireEvent, Firefighter } from "@/lib/types";
 
 interface Props {
@@ -71,10 +72,13 @@ export function EventFeed({ events, firefighters }: Props) {
                   )}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-base font-bold leading-tight">
-                    {nameByMac.get(ev.tag_mac) ?? ev.tag_mac}
+                  <p className="flex min-w-0 items-center gap-2 text-base font-bold leading-tight">
+                    <span className="truncate">
+                      {nameByMac.get(ev.tag_mac) ?? ev.tag_mac}
+                    </span>
+                    {!nameByMac.has(ev.tag_mac) && <UnregisteredBadge />}
                     <span
-                      className={`ml-2 text-sm font-bold ${
+                      className={`shrink-0 text-sm font-bold ${
                         isEntry ? "text-warn" : "text-ok"
                       }`}
                     >

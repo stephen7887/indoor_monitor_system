@@ -1,0 +1,13 @@
+{
+  "id": "session-1783240434341",
+  "startedAt": "2026-07-05T08:33:54.341Z",
+  "platform": "darwin",
+  "cwd": "/Users/geonwu/Desktop/fire-demo",
+  "context": {},
+  "metrics": {
+    "edits": 13,
+    "commands": 0,
+    "tasks": 0,
+    "errors": 0
+  }
+}

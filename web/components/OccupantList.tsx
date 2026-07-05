@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, User } from "lucide-react";
+import { CheckCircle2, Clock, User } from "lucide-react";
 import { fmtElapsed, fmtTime } from "@/lib/format";
 import {
   ALERT_LIMIT_MS,
@@ -12,6 +12,8 @@ import type { Occupant } from "@/lib/types";
 interface Props {
   occupants: Occupant[];
   now: number | null;
+  /** 통신 지연/두절 시 마지막 하트비트 수신 시각(epoch ms) — 카드 흐림 + 기준 시점 표시 */
+  staleSince?: number | null;
 }
 
 const STATUS_LABEL: Record<OccupantStatus, string> = {
@@ -38,8 +40,27 @@ const STATUS_BAR: Record<OccupantStatus, string> = {
   danger: "bg-danger",
 };
 
+/** 통신 지연/두절 중 데이터 기준 시점 — 이 시각 이후 이벤트는 아직 미반영일 수 있다 */
+export function StaleStamp({ since }: { since: number }) {
+  return (
+    <p className="mb-3 flex items-center gap-1.5 rounded-md bg-warn-bg px-2.5 py-1.5 text-sm font-bold text-warn">
+      <Clock className="h-4 w-4 shrink-0" aria-hidden />
+      마지막 수신 {fmtTime(new Date(since).toISOString())} 기준 — 이후 변동 미반영 가능
+    </p>
+  );
+}
+
+/** firefighters 미등록 태그 표시 — MAC만 알고 신원 미확인 상태 경고 */
+export function UnregisteredBadge() {
+  return (
+    <span className="shrink-0 rounded bg-warn-bg px-1.5 py-0.5 text-xs font-bold text-warn">
+      미등록
+    </span>
+  );
+}
+
 /** 현재 내부 인원 (태그별 최신 이벤트가 entry인 대원) */
-export function OccupantList({ occupants, now }: Props) {
+export function OccupantList({ occupants, now, staleSince }: Props) {
   return (
     <section
       aria-label="현재 내부 인원"
@@ -52,6 +73,13 @@ export function OccupantList({ occupants, now }: Props) {
         </p>
       </div>
 
+      {staleSince != null && <StaleStamp since={staleSince} />}
+
+      <div
+        className={`transition-opacity duration-300 ${
+          staleSince != null ? "opacity-60" : ""
+        }`}
+      >
       {occupants.length === 0 ? (
         <div className="flex items-center gap-3 rounded-lg bg-surface-2 px-4 py-6">
           <CheckCircle2 className="h-6 w-6 shrink-0 text-ok" aria-hidden />
@@ -76,12 +104,14 @@ export function OccupantList({ occupants, now }: Props) {
                       <User className="h-5 w-5 text-muted" aria-hidden />
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate text-xl font-bold leading-tight">
-                        {o.name}
+                      <p className="flex min-w-0 items-center gap-2 text-xl font-bold leading-tight">
+                        <span className="truncate">{o.name}</span>
+                        {!o.registered && <UnregisteredBadge />}
                       </p>
                       <p className="truncate text-sm font-medium text-muted">
                         {o.team ? `${o.team} · ` : ""}
-                        {o.tagMac} · 진입 {fmtTime(new Date(o.enteredAt).toISOString())}
+                        {o.registered ? `${o.tagMac} · ` : ""}진입{" "}
+                        {fmtTime(new Date(o.enteredAt).toISOString())}
                       </p>
                     </div>
                   </div>
@@ -115,6 +145,7 @@ export function OccupantList({ occupants, now }: Props) {
           })}
         </ul>
       )}
+      </div>
     </section>
   );
 }
