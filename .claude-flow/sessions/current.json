@@ -5,9 +5,10 @@
   "cwd": "/Users/geonwu/Desktop/fire-demo",
   "context": {},
   "metrics": {
-    "edits": 13,
+    "edits": 17,
     "commands": 0,
     "tasks": 0,
     "errors": 0
-  }
+  },
+  "restoredAt": "2026-07-09T06:34:59.735Z"
 }

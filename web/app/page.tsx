@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import {
   Activity,
   AlertTriangle,
   Flame,
   RadioTower,
+  UserCog,
   Users,
 } from "lucide-react";
 import { AlertPanel } from "@/components/AlertPanel";
@@ -135,6 +137,14 @@ function Dashboard() {
                 : new Date(now).toLocaleTimeString("ko-KR", { hour12: false })}
             </p>
             <MuteToggle muted={muted} onToggle={toggleMuted} />
+            <Link
+              href="/admin"
+              aria-label="대원 관리 페이지"
+              title="대원 관리"
+              className="rounded-lg border border-edge p-2 hover:bg-surface-2"
+            >
+              <UserCog className="h-5 w-5" aria-hidden />
+            </Link>
             <ThemeToggle />
           </div>
         </div>
