@@ -48,6 +48,7 @@ class Uploader(threading.Thread):
             "direction": ev.direction, "cross_sec": ev.cross_sec,
             "peak_a": ev.peak_a, "peak_b": ev.peak_b,
             "detected_at": _iso(ev.detected_at),
+            "method": ev.method, "confidence": ev.confidence,
         }
         with self._db_lock:
             self._db.execute(

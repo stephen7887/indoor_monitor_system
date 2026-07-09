@@ -55,7 +55,11 @@ def main():
     ap.add_argument("file_a")
     ap.add_argument("file_b")
     ap.add_argument("--gt", help="GT CSV (start,end,direction)")
+    ap.add_argument("--method", choices=["peak", "diff", "ensemble"],
+                    default=P.METHOD, help="판정 방법 (기본: params.METHOD)")
     args = ap.parse_args()
+    P.METHOD = args.method
+    print(f"판정 방법: {P.METHOD}")
 
     da, db = load_csv(args.file_a), load_csv(args.file_b)
     stream = sorted(
@@ -75,7 +79,7 @@ def main():
         m = int(ev.detected_at % 3600 // 60)
         s = ev.detected_at % 60
         print(f"  {h:02d}:{m:02d}:{s:05.2f}  {ev.direction:5s} "
-              f"cross={ev.cross_sec:4.1f}s  tag={ev.tag_mac}")
+              f"[{ev.method:4s}] cross={ev.cross_sec:4.1f}s  tag={ev.tag_mac}")
 
     if not args.gt:
         return

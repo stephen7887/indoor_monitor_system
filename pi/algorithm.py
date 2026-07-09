@@ -47,6 +47,8 @@ class Event:
     peak_b: float
     detected_at: float    # 이벤트 중심 시각 (epoch)
     site_id: str
+    method: str = "peak"        # "peak" | "diff"
+    confidence: float = 0.8     # ensemble 합의 시 상향
 
 
 @dataclass
@@ -56,6 +58,12 @@ class _TagState:
     episode_start: float = 0.0
     last_above: float = 0.0        # 마지막으로 FLOOR 위였던 시각 (A/B 통합)
     refractory_until: float = 0.0  # COOLDOWN 불응기
+    # diff 상태머신 (v2)
+    occ_state: str | None = None   # "inside" | "outside" | None(미확정)
+    zone_cand: str | None = None
+    zone_cand_since: float = 0.0
+    state_confirmed_at: float = 0.0
+    recent_events: list = field(default_factory=list)  # (t, direction) — 중복 제거용
 
 
 class Detector:
@@ -83,6 +91,16 @@ class Detector:
 
         events: list[Event] = []
 
+        # ── diff 상태머신 (v2) ──
+        if P.METHOD in ("diff", "ensemble"):
+            ev = self._feed_diff(mac, st, t)
+            if ev and self._accept(st, ev):
+                events.append(ev)
+
+        # ── peak 에피소드 방식 ──
+        if P.METHOD not in ("peak", "ensemble"):
+            return events
+
         # 히스테리시스: 시작은 FLOOR+margin, 유지 판정은 FLOOR
         if filtered >= P.RSSI_FLOOR:
             st.last_above = t
@@ -98,10 +116,79 @@ class Detector:
             if quiet or too_long:
                 ev = self._finalize(mac, st, end=t)
                 st.episode_active = False
-                if ev:
+                if ev and self._accept(st, ev):
                     st.refractory_until = ev.detected_at + P.COOLDOWN_SEC
                     events.append(ev)
         return events
+
+    # ── 중복 제거 + diff 상태 동기화 ────────────────────────
+    def _accept(self, st: _TagState, ev: Event) -> bool:
+        st.recent_events = [(t, d) for t, d in st.recent_events
+                            if ev.detected_at - t < P.ENSEMBLE_DEDUPE_SEC]
+        for t, d in st.recent_events:
+            if d == ev.direction:
+                return False  # 다른 방식이 이미 같은 이벤트를 냄 (중복)
+            # 반대 방향 충돌: 먼저 확정된 이벤트가 이긴다.
+            # 같은 통과를 두 방식이 다르게 읽은 것 — 나중 것은 기각하고
+            # 상태는 먼저 확정된 방향으로 유지
+            st.occ_state = "inside" if d == "entry" else "outside"
+            return False
+        st.recent_events.append((ev.detected_at, ev.direction))
+        # peak 이벤트가 확정되면 diff 상태도 그 방향으로 동기화 (모순 방지)
+        st.occ_state = "inside" if ev.direction == "entry" else "outside"
+        return True
+
+    # ── diff 상태머신 (v2): 안쪽−바깥쪽 차분 + 히스테리시스 ──
+    def _feed_diff(self, mac: str, st: _TagState, t: float) -> Event | None:
+        in_rec, out_rec = ("A", "B") if P.SWAP_AB else ("B", "A")
+        bi, bo = st.buf[in_rec], st.buf[out_rec]
+        if not bi or not bo:
+            return None
+        si, so = bi[-1], bo[-1]
+        if abs(si.t - so.t) > P.DIFF_PAIR_MAX_AGE:
+            return None
+        if max(si.filtered, so.filtered) < P.RSSI_FLOOR:
+            st.zone_cand = None   # 태그 부재 — 상태는 유지 (깊이 들어간 경우)
+            return None
+        # 양쪽 모두 의미 있는 신호일 때만 구역 판정 (통과 후 꼬리 FP 차단)
+        if min(si.filtered, so.filtered) < P.RSSI_FLOOR - P.DIFF_BOTH_MARGIN_DB:
+            return None
+        diff = si.filtered - so.filtered
+        if diff > P.DIFF_HYST_DB:
+            zone = "inside"
+        elif diff < -P.DIFF_HYST_DB:
+            zone = "outside"
+        else:
+            return None           # 중간지대 — 후보 유지, 시계만 흐름
+        if zone != st.zone_cand:
+            st.zone_cand, st.zone_cand_since = zone, t
+            return None
+        if t - st.zone_cand_since < P.DIFF_STABLE_SEC:
+            return None
+        if st.occ_state is None:          # 최초 관측 — 이벤트 없이 상태만 설정
+            st.occ_state = zone
+            st.state_confirmed_at = t
+            return None
+        if zone == st.occ_state:          # 재확인 — 상태 신선도 갱신
+            st.state_confirmed_at = t
+            return None
+        if t < st.refractory_until:
+            return None
+        # 상태가 오래됐으면(미관측 이탈 가능) 이벤트 없이 재정렬만 — 보정 FP 방지
+        if t - st.state_confirmed_at > P.DIFF_STATE_TTL_SEC:
+            st.occ_state = zone
+            st.state_confirmed_at = t
+            return None
+        st.occ_state = zone
+        st.state_confirmed_at = t
+        direction = "entry" if zone == "inside" else "exit"
+        mid = st.zone_cand_since
+        eid = str(uuid.uuid5(
+            _EVENT_NS, f"{self.site_id}|{mac}|{direction}|{round(mid)}"))
+        return Event(event_id=eid, tag_mac=mac, direction=direction,
+                     cross_sec=0.0, peak_a=round(so.filtered, 1),
+                     peak_b=round(si.filtered, 1), detected_at=mid,
+                     site_id=self.site_id, method="diff", confidence=0.7)
 
     def flush(self, now: float) -> list[Event]:
         """패킷이 끊겨도 (replay 종료·태그 이탈) 열린 에피소드를 마감."""
@@ -110,7 +197,7 @@ class Detector:
             if st.episode_active and (now - st.last_above) >= P.EPISODE_QUIET_SEC:
                 ev = self._finalize(mac, st, end=now)
                 st.episode_active = False
-                if ev:
+                if ev and self._accept(st, ev):
                     st.refractory_until = ev.detected_at + P.COOLDOWN_SEC
                     out.append(ev)
         return out
