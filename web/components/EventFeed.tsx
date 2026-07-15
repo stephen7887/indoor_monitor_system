@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeftFromLine, ArrowRightToLine, Inbox } from "lucide-react";
 import { fmtTime } from "@/lib/format";
 import { UnregisteredBadge } from "@/components/OccupantList";
+import { isEstimated } from "@/lib/occupancy";
 import type { FireEvent, Firefighter } from "@/lib/types";
 
 interface Props {
@@ -13,6 +14,15 @@ interface Props {
 }
 
 const FEED_LIMIT = 50;
+
+/** confidence 0.5 미만 이벤트 — 단일 수신기 판정 등 낮은 신뢰도 표시 */
+function EstimatedBadge() {
+  return (
+    <span className="shrink-0 rounded border border-edge bg-surface px-1.5 py-0.5 text-xs font-bold text-muted">
+      추정
+    </span>
+  );
+}
 
 /** Supabase Realtime으로 수신한 진출입 이벤트 실시간 피드 */
 export function EventFeed({ events, firefighters }: Props) {
@@ -52,11 +62,12 @@ export function EventFeed({ events, firefighters }: Props) {
         <ul className="max-h-[28rem] space-y-2 overflow-y-auto pr-1">
           {sorted.map((ev) => {
             const isEntry = ev.direction === "entry";
+            const estimated = isEstimated(ev);
             return (
               <motion.li
                 key={ev.id}
                 initial={reduceMotion ? false : { opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
+                animate={{ opacity: estimated ? 0.55 : 1, y: 0 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
                 className="flex items-center gap-3 rounded-lg bg-surface-2 px-3 py-2.5"
               >
@@ -77,6 +88,7 @@ export function EventFeed({ events, firefighters }: Props) {
                       {nameByMac.get(ev.tag_mac) ?? ev.tag_mac}
                     </span>
                     {!nameByMac.has(ev.tag_mac) && <UnregisteredBadge />}
+                    {estimated && <EstimatedBadge />}
                     <span
                       className={`shrink-0 text-sm font-bold ${
                         isEntry ? "text-warn" : "text-ok"

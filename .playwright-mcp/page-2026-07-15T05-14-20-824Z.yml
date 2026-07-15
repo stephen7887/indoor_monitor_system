@@ -1,0 +1,88 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "Home" [ref=e4] [cursor=pointer]:
+        - /url: "#hero"
+      - link "Tech" [ref=e5] [cursor=pointer]:
+        - /url: "#optics"
+      - link "Specs" [ref=e6] [cursor=pointer]:
+        - /url: "#specs"
+    - generic [ref=e7]: VANTA
+    - link "Pre-order" [ref=e8] [cursor=pointer]:
+      - /url: "#cta"
+  - main [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]: VANTA X1 — Cinematic FPV Drone
+      - heading "Own the Dark Sky." [level=1] [ref=e12]:
+        - generic [ref=e13]: Own the
+        - generic [ref=e15]: Dark Sky.
+      - paragraph [ref=e17]: 밤을 위해 설계된 시네마틱 드론. 소리 없이 날고, 어둠 속에서 모든 것을 담아냅니다.
+      - generic [ref=e18]: Scroll
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]: 140KM/H
+        - generic [ref=e25]: Max Speed
+      - generic [ref=e26]:
+        - generic [ref=e27]: 8K
+        - generic [ref=e28]: Cinema Camera
+      - generic [ref=e29]:
+        - generic [ref=e30]: 42MIN
+        - generic [ref=e31]: Flight Time
+      - generic [ref=e32]:
+        - generic [ref=e33]: 18KM
+        - generic [ref=e34]: Transmission
+    - generic [ref=e36]:
+      - generic [ref=e37]: 01 — Optics
+      - heading [level=2] [ref=e40]:
+        - text: Sees what
+        - emphasis [ref=e41]: you can't.
+      - paragraph [ref=e43]: 1인치 센서와 f/1.4 야간 광학계. 별빛만으로 촬영하는 8K 시네마 카메라가 3축 짐벌 위에서 완벽하게 수평을 유지합니다.
+    - generic [ref=e45]:
+      - generic [ref=e46]: 02 — Propulsion
+      - heading [level=2] [ref=e49]:
+        - text: Silence,
+        - emphasis [ref=e50]: at 140km/h.
+      - paragraph [ref=e52]: 역회전 저소음 프로펠러와 코어리스 모터. 시속 140km에서도 도서관보다 조용합니다. 바람은 느끼지만, 소리는 남지 않습니다.
+    - generic [ref=e54]:
+      - generic [ref=e55]: 03 — Airframe
+      - heading [level=2] [ref=e58]:
+        - text: Carbon.
+        - emphasis [ref=e59]: Nothing else.
+      - paragraph [ref=e61]: 단조 카본 모노코크 프레임, 249g. 무광 반사 억제 코팅으로 밤하늘에 완전히 녹아듭니다. 이름이 VANTA인 이유입니다.
+    - generic [ref=e63]:
+      - generic [ref=e64]: 04 — Specifications
+      - heading "The numbers." [level=2] [ref=e67]
+      - generic [ref=e69]:
+        - generic [ref=e70]:
+          - term [ref=e71]: 무게
+          - definition [ref=e72]: 249 g
+        - generic [ref=e73]:
+          - term [ref=e74]: 최고 속도
+          - definition [ref=e75]: 140 km/h (Sport)
+        - generic [ref=e76]:
+          - term [ref=e77]: 비행 시간
+          - definition [ref=e78]: 42 min
+        - generic [ref=e79]:
+          - term [ref=e80]: 카메라
+          - definition [ref=e81]: 8K / 60fps · 1" CMOS · f/1.4
+        - generic [ref=e82]:
+          - term [ref=e83]: 짐벌
+          - definition [ref=e84]: 3-Axis Mechanical
+        - generic [ref=e85]:
+          - term [ref=e86]: 전송 거리
+          - definition [ref=e87]: 18 km · O5 HD
+        - generic [ref=e88]:
+          - term [ref=e89]: 장애물 회피
+          - definition [ref=e90]: 전방향 LiDAR + Vision
+        - generic [ref=e91]:
+          - term [ref=e92]: 소음
+          - definition [ref=e93]: 58 dB @ 1m
+    - generic [ref=e95]:
+      - generic [ref=e96]: Pre-order Now
+      - heading "The night is yours." [level=2] [ref=e99]: The nightis yours.
+      - generic [ref=e100]: VANTA X1₩1,890,000
+      - button "Pre-order" [ref=e103]
+      - status
+  - contentinfo [ref=e104]:
+    - generic [ref=e105]: © 2026 VANTA Aerospace
+    - generic [ref=e106]: Designed in the dark

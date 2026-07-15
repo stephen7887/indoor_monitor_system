@@ -10,6 +10,14 @@ export const WARN_LIMIT_MS = 20 * 60 * 1000;
 export const HEARTBEAT_STALE_MS = 60 * 1000;
 export const HEARTBEAT_LOST_MS = 180 * 1000;
 
+// 이 값 미만이면 "추정" 이벤트 — 표시만 구분하고 내부 인원 계산에는 동일하게 포함(Miss 방지)
+export const CONFIDENCE_ESTIMATED = 0.5;
+
+/** confidence null(구버전 이벤트)은 확정으로 취급 — DB default 0.8 기준 */
+export function isEstimated(ev: FireEvent): boolean {
+  return ev.confidence != null && ev.confidence < CONFIDENCE_ESTIMATED;
+}
+
 /**
  * 태그별 최신 이벤트가 entry면 내부 인원으로 판정.
  * 다중 대원 동시 활동 전제 — 태그(tag_mac) 단위로 독립 계산.
@@ -38,6 +46,7 @@ export function computeOccupants(
       team: ff?.team ?? null,
       registered: ff != null,
       enteredAt: Date.parse(ev.detected_at),
+      estimated: isEstimated(ev),
     });
   }
   // 가장 오래 내부에 있는 대원이 위로

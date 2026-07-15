@@ -106,6 +106,15 @@ export function OccupantList({ occupants, now, staleSince }: Props) {
                     <div className="min-w-0">
                       <p className="flex min-w-0 items-center gap-2 text-xl font-bold leading-tight">
                         <span className="truncate">{o.name}</span>
+                        {o.estimated && (
+                          <span
+                            className="shrink-0 text-muted"
+                            title="추정 이벤트(confidence<0.5) 기반 판정 — 현장 확인 권장"
+                            aria-label="추정 판정"
+                          >
+                            ?
+                          </span>
+                        )}
                         {!o.registered && <UnregisteredBadge />}
                       </p>
                       <p className="truncate text-sm font-medium text-muted">

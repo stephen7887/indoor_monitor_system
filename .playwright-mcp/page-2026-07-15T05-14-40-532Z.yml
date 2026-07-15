@@ -1,0 +1,46 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e8]:
+          - heading "소방관 진출입 관제" [level=1] [ref=e9]
+          - paragraph [ref=e10]: BLE 진출입 감지 · 실시간
+        - generic [ref=e11]:
+          - paragraph [ref=e12]: 서버 끊김
+          - paragraph [ref=e14]: 14시 14분 40초
+          - button "경보음 끄기" [ref=e15] [cursor=pointer]
+          - link "대원 관리 페이지" [ref=e20] [cursor=pointer]:
+            - /url: /admin
+          - button "라이트 테마로 전환 (야외)" [ref=e33] [cursor=pointer]
+    - main [ref=e40]:
+      - generic [ref=e41]:
+        - generic [ref=e42]:
+          - paragraph [ref=e49]: 내부 인원
+          - paragraph [ref=e50]: –
+        - generic [ref=e51]:
+          - paragraph [ref=e55]: 미퇴장 경보
+          - paragraph [ref=e56]: –
+        - generic [ref=e57]:
+          - paragraph [ref=e61]: 24시간 이벤트
+          - paragraph [ref=e62]: –
+        - generic [ref=e63]:
+          - paragraph [ref=e72]: 현장 통신
+          - paragraph [ref=e73]: 미수신
+      - generic [ref=e74]:
+        - region "현재 내부 인원" [ref=e76]:
+          - generic [ref=e77]:
+            - heading "내부 인원" [level=2] [ref=e78]
+            - paragraph [ref=e79]: 진입 후 미퇴장 대원 · 25분 초과 시 경보
+          - paragraph [ref=e85]: 내부 인원 없음 — 전 대원 외부
+        - generic [ref=e86]:
+          - region "미퇴장 경보" [ref=e87]:
+            - generic [ref=e88]:
+              - heading "미퇴장 경보" [level=2] [ref=e89]
+              - generic [ref=e90]: 0건
+            - paragraph [ref=e96]: 25분 초과 미퇴장 대원 없음
+          - region "진출입 이벤트 피드" [ref=e97]:
+            - generic [ref=e98]:
+              - heading "실시간 진출입" [level=2] [ref=e99]
+              - paragraph [ref=e100]: 최근 50건
+            - paragraph [ref=e105]: 최근 24시간 이벤트 없음
+  - alert [ref=e106]

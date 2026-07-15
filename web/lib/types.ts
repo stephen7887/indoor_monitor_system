@@ -16,6 +16,7 @@ export interface FireEvent {
   cross_sec: number | null;
   peak_a: number | null;
   peak_b: number | null;
+  confidence: number | null; // 판정 신뢰도 0~1 (migration_v2, null=구버전 이벤트)
   detected_at: string;
   created_at: string;
 }
@@ -34,4 +35,5 @@ export interface Occupant {
   team: string | null;
   registered: boolean; // firefighters에 등록된 태그인지 (false면 name = tag_mac)
   enteredAt: number; // epoch ms (events.detected_at)
+  estimated: boolean; // 내부 판정 근거가 추정 이벤트(confidence<0.5)뿐 — 이름 옆 "?" 표시
 }
