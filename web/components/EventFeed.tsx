@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowLeftFromLine, ArrowRightToLine, Inbox } from "lucide-react";
 import { fmtTime } from "@/lib/format";
 import { UnregisteredBadge } from "@/components/OccupantList";
-import { isEstimated } from "@/lib/occupancy";
+import { computeDuplicateEventIds, isEstimated } from "@/lib/occupancy";
 import type { FireEvent, Firefighter } from "@/lib/types";
 
 interface Props {
@@ -24,6 +24,15 @@ function EstimatedBadge() {
   );
 }
 
+/** 상태를 바꾸지 않는 이벤트(내부 상태 entry / 외부 상태 exit) — 인원 계산 무시 표시 */
+function DuplicateBadge() {
+  return (
+    <span className="shrink-0 rounded border border-edge bg-surface px-1.5 py-0.5 text-xs font-bold text-muted">
+      중복
+    </span>
+  );
+}
+
 /** Supabase Realtime으로 수신한 진출입 이벤트 실시간 피드 */
 export function EventFeed({ events, firefighters }: Props) {
   const reduceMotion = useReducedMotion();
@@ -32,6 +41,9 @@ export function EventFeed({ events, firefighters }: Props) {
     () => new Map(firefighters.map((f) => [f.tag_mac, f.name])),
     [firefighters],
   );
+
+  // 중복 판별은 잘린 피드가 아니라 전체 이벤트 이력 기준
+  const dupIds = useMemo(() => computeDuplicateEventIds(events), [events]);
 
   const sorted = useMemo(
     () =>
@@ -63,17 +75,22 @@ export function EventFeed({ events, firefighters }: Props) {
           {sorted.map((ev) => {
             const isEntry = ev.direction === "entry";
             const estimated = isEstimated(ev);
+            const duplicate = dupIds.has(ev.id);
             return (
               <motion.li
                 key={ev.id}
                 initial={reduceMotion ? false : { opacity: 0, y: -10 }}
-                animate={{ opacity: estimated ? 0.55 : 1, y: 0 }}
+                animate={{ opacity: duplicate || estimated ? 0.55 : 1, y: 0 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
                 className="flex items-center gap-3 rounded-lg bg-surface-2 px-3 py-2.5"
               >
                 <span
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
-                    isEntry ? "bg-warn-bg text-warn" : "bg-ok-bg text-ok"
+                    duplicate
+                      ? "bg-surface text-muted"
+                      : isEntry
+                        ? "bg-warn-bg text-warn"
+                        : "bg-ok-bg text-ok"
                   }`}
                 >
                   {isEntry ? (
@@ -89,9 +106,14 @@ export function EventFeed({ events, firefighters }: Props) {
                     </span>
                     {!nameByMac.has(ev.tag_mac) && <UnregisteredBadge />}
                     {estimated && <EstimatedBadge />}
+                    {duplicate && <DuplicateBadge />}
                     <span
                       className={`shrink-0 text-sm font-bold ${
-                        isEntry ? "text-warn" : "text-ok"
+                        duplicate
+                          ? "text-muted"
+                          : isEntry
+                            ? "text-warn"
+                            : "text-ok"
                       }`}
                     >
                       {isEntry ? "진입" : "진출"}
