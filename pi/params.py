@@ -4,7 +4,29 @@
 # 기본값은 소방데모.ipynb에서 검증된 값 (500ms / 5m 기준)
 # ============================================================
 
-# ── 판정 알고리즘 (노트북 검증값) ────────────────────────────
+# ── 배치 프로파일 ────────────────────────────────────────────
+# 2026-07-14 실측(강의실 개방공간·폴 1.2m)에서 홀수통과 튜닝→짝수 검증 완료.
+# 배치를 바꾸면 반드시 replay로 재검증 후 프로파일 전환할 것.
+PROFILES = {
+    # 검증 성적: 감지 93.8% / 방향 97.8% / FP 25 (SMA 기준)
+    "gate_1m2_open": dict(RSSI_FLOOR=-78, MIN_CROSS_SEC=0.4, MAX_CROSS_SEC=9.0,
+                          DIFF_STABLE_SEC=2.5, FILTER_MODE="sma"),
+    # 칼만 대안: 감지 95.9% / 방향 96.8% / FP 30 — Miss 우선 현장용
+    "gate_1m2_open_kalman": dict(RSSI_FLOOR=-78, MIN_CROSS_SEC=0.4, MAX_CROSS_SEC=9.0,
+                          DIFF_STABLE_SEC=2.5, FILTER_MODE="kalman",
+                          KALMAN_Q=8.0, KALMAN_R=4.0),
+    # 문(벽) 배치 — 2026-07-16 실측 튜닝. 방향 98.5%, 칼만 확정
+    "door_1m2": dict(RSSI_FLOOR=-78, MIN_CROSS_SEC=0.4, MAX_CROSS_SEC=9.0,
+                     DIFF_STABLE_SEC=2.5, FILTER_MODE="kalman",
+                     KALMAN_Q=8.0, KALMAN_R=4.0, EPISODE_QUIET_SEC=2.0,
+                     COOLDOWN_SEC=3.0, DIFF_HYST_DB=5.0),
+    # 구형 복도 5m 배치 (노트북 검증값)
+    "corridor_5m": dict(RSSI_FLOOR=-80, MIN_CROSS_SEC=2.0, MAX_CROSS_SEC=9.0,
+                        DIFF_STABLE_SEC=1.5, FILTER_MODE="sma"),
+}
+ACTIVE_PROFILE = "door_1m2"  # 문 배치 기준. 개방공간이면 "gate_1m2_open"
+
+# ── 판정 알고리즘 (기본값 — 프로파일이 덮어씀) ───────────────
 RSSI_FLOOR      = -80    # 노이즈 하한선. FP 많으면 -75로 (노트북 주석 참조)
 MIN_CROSS_SEC   = 2.0    # A-B 피크 최소 시간차
 MAX_CROSS_SEC   = 9.0    # A-B 피크 최대 시간차
@@ -40,10 +62,14 @@ DIFF_STATE_TTL_SEC  = 20.0  # 상태 미확인이 이 시간을 넘으면 전이
 # ── 정지 오탐(핑퐁 FP) 가드 ──────────────────────────────────
 # 진짜 통과는 피크 직전에 신호가 바닥에서 크게 상승한다.
 # 교차점에 서 있는 사람의 평탄한 노이즈 피크는 상승폭이 작아 기각.
+MERGE_GAP_SEC = 6.0   # 미확정 에피소드 병합 허용 간격
 RISE_GUARD_DB = 6.0   # 피크 − (피크 이전 최솟값) 최소 요구치. 0이면 비활성
 
 # ── 필터 선택 (기본 SMA = 검증값. EMA는 실험용 — replay 비교 후에만 채택) ──
-FILTER_MODE     = "sma"      # "sma" | "ema"
+FILTER_MODE     = "sma"      # "sma" | "ema" | "kalman"
+KALMAN_Q        = 4.0        # 프로세스 노이즈 (dB^2/s) — 클수록 반응 빠름
+KALMAN_R        = 6.0        # 측정 노이즈 (dB^2) — 클수록 부드러움
+KALMAN_P0       = 10.0
 EMA_TAU_SEC     = 1.0        # ema일 때 시간상수 (시간 기반 α = 1-exp(-dt/tau))
 
 # ── 업로더 ───────────────────────────────────────────────────
@@ -61,3 +87,7 @@ FALLBACK_TAG_MACS: list[str] = [
 # ── 시리얼 ───────────────────────────────────────────────────
 SERIAL_BAUD     = 115200
 # 포트는 .env 에서 지정 (부팅마다 ttyACM0/1이 바뀔 수 있으므로 /dev/serial/by-id/ 경로 권장)
+
+# ── 프로파일 적용 (파일 맨 끝에서 실행) ──────────────────────
+for _k, _v in PROFILES.get(ACTIVE_PROFILE, {}).items():
+    globals()[_k] = _v

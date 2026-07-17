@@ -80,7 +80,18 @@ class Uploader(threading.Thread):
                 if self._heartbeat():
                     last_hb = now
             self._flush()
+            self._prune()
             self._stop.wait(1.0)
+
+    def _prune(self):
+        if time.time() - getattr(self, "_last_prune", 0) < 3600:
+            return
+        self._last_prune = time.time()
+        with self._db_lock:
+            self._db.execute(
+                "DELETE FROM queue WHERE sent=1 AND created < ?",
+                (time.time() - 86400,))
+            self._db.commit()
 
     def _pending(self, limit=50):
         with self._db_lock:

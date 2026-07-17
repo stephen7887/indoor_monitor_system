@@ -73,6 +73,7 @@ def main():
 
     log.info("가동 시작 (site=%s, pi=%s)", site_id, pi_id)
     last_flush = time.time()
+    last_roster = time.time()
     while running:
         try:
             receiver, mac, rssi, t = q.get(timeout=0.5)
@@ -85,6 +86,13 @@ def main():
             pass
         # 패킷이 끊긴 태그의 열린 에피소드 주기적 마감
         now = time.time()
+        # 대원 명단 주기 갱신 (새 대원 등록 후 재시작 불필요)
+        if now - last_roster >= 300:
+            last_roster = now
+            fresh = up.fetch_allowed_macs()
+            if fresh is not None and fresh != det.allowed:
+                det.allowed = fresh
+                log.info("허용 태그 갱신: %d개", len(fresh))
         if now - last_flush >= 1.0:
             for ev in det.flush(now):
                 log.info(">>> 이벤트(flush): %s %s cross=%.1fs",

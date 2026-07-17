@@ -63,6 +63,7 @@ class _TagState:
     zone_cand: str | None = None
     zone_cand_since: float = 0.0
     state_confirmed_at: float = 0.0
+    last_unpaired: tuple | None = None  # (receiver, t_peak, r_peak, ep_end)
     recent_events: list = field(default_factory=list)  # (t, direction) — 중복 제거용
 
 
@@ -209,6 +210,21 @@ class Detector:
             dt = max(t - prev.t, 1e-3)
             alpha = 1.0 - math.exp(-dt / P.EMA_TAU_SEC)
             return prev.filtered + alpha * (rssi - prev.filtered)
+        if P.FILTER_MODE == "kalman":
+            # 1D 칼만: 상태=RSSI, 프로세스 노이즈는 경과시간 비례
+            if not buf:
+                self._kp = getattr(self, "_kp", {})
+                key = id(buf)
+                self._kp[key] = P.KALMAN_P0
+                return rssi
+            prev = buf[-1]
+            key = id(buf)
+            kp = getattr(self, "_kp", {}).setdefault(key, P.KALMAN_P0)
+            dt = max(t - prev.t, 1e-3)
+            pk = kp + P.KALMAN_Q * dt
+            K = pk / (pk + P.KALMAN_R)
+            self._kp[key] = (1 - K) * pk
+            return prev.filtered + K * (rssi - prev.filtered)
         # SMA(count 기반) — 노트북 검증 방식 (min_periods=1)
         recent = [s.rssi for s in list(buf)[-(P.SMA_WINDOW - 1):]] + [rssi]
         return float(np.mean(recent))
@@ -244,6 +260,9 @@ class Detector:
         pa = self._episode_peaks(st, "A", end)
         pb = self._episode_peaks(st, "B", end)
         if not pa or not pb:
+            ev = self._try_merge_unpaired(mac, st, pa, pb, end)
+            if ev:
+                return ev
             if self.on_unpaired:
                 self.on_unpaired(mac, st.episode_start, end,
                                  "A" if pa else ("B" if pb else "none"))
@@ -267,6 +286,7 @@ class Detector:
                                  f"dt={abs(t_a0 - t_b0):.2f}")
             return None
         _, t_a, r_a, t_b, r_b, dt = best
+        confidence = self._confidence(st, t_a, t_b, r_a, r_b, end)
         first = "A" if t_a < t_b else "B"
         direction = "entry" if (first == "A") ^ P.SWAP_AB else "exit"
         mid = (t_a + t_b) / 2.0
@@ -275,4 +295,68 @@ class Detector:
         return Event(event_id=eid, tag_mac=mac, direction=direction,
                      cross_sec=round(dt, 2), peak_a=round(r_a, 1),
                      peak_b=round(r_b, 1), detected_at=mid,
-                     site_id=self.site_id)
+                     site_id=self.site_id, method="peak",
+                     confidence=confidence)
+
+    def _try_merge_unpaired(self, mac: str, st: _TagState,
+                            pa, pb, end: float):
+        """한쪽 수신기만 잡힌 에피소드가 연달아 쪼개진 경우 복구.
+        직전 미확정 에피소드(반대편 수신기)와 최강 피크를 페어링."""
+        peaks = pa or pb
+        if not peaks:
+            st.last_unpaired = None
+            return None
+        rec = "A" if pa else "B"
+        t_pk, r_pk = max(peaks, key=lambda x: x[1])
+        prev = st.last_unpaired
+        st.last_unpaired = (rec, t_pk, r_pk, end)
+        if not prev or prev[0] == rec:
+            return None
+        if st.episode_start - prev[3] > P.MERGE_GAP_SEC:
+            return None  # 너무 오래된 조각
+        t_o, r_o = prev[1], prev[2]
+        dt = abs(t_pk - t_o)
+        if not (P.MIN_CROSS_SEC <= dt <= P.MAX_CROSS_SEC):
+            return None
+        t_a2, r_a2 = (t_pk, r_pk) if rec == "A" else (t_o, r_o)
+        t_b2, r_b2 = (t_o, r_o) if rec == "A" else (t_pk, r_pk)
+        first = "A" if t_a2 < t_b2 else "B"
+        direction = "entry" if (first == "A") ^ P.SWAP_AB else "exit"
+        mid = (t_a2 + t_b2) / 2.0
+        st.last_unpaired = None
+        eid = str(uuid.uuid5(
+            _EVENT_NS, f"{self.site_id}|{mac}|{direction}|{round(mid)}"))
+        return Event(event_id=eid, tag_mac=mac, direction=direction,
+                     cross_sec=round(dt, 2), peak_a=round(r_a2, 1),
+                     peak_b=round(r_b2, 1), detected_at=mid,
+                     site_id=self.site_id, method="peak-merge",
+                     confidence=0.55)
+
+    def _confidence(self, st: _TagState, t_a: float, t_b: float,
+                    r_a: float, r_b: float, end: float) -> float:
+        """walk-by(미통과) FP 판별 특징으로 이벤트 신뢰도 산출 (억제 아님 — Miss>FP).
+        특징 1: A-B 우세 반전 (진짜 통과는 이벤트 전후 우세가 뒤집힘)
+        특징 2: 약한 반대편 피크 (미통과는 반대편이 반사파로만 잡혀 약함)"""
+        mid = (t_a + t_b) / 2.0
+        before, after = [], []
+        bins_a, bins_b = {}, {}
+        for rec, bins in (("A", bins_a), ("B", bins_b)):
+            for s in st.buf[rec]:
+                off = round(s.t - mid)
+                if -5 <= off <= 5 and off != 0:
+                    bins.setdefault(off, []).append(s.filtered)
+        for off in range(-5, 6):
+            if off == 0 or off not in bins_a or off not in bins_b:
+                continue
+            d = float(np.mean(bins_a[off]) - np.mean(bins_b[off]))
+            (before if off < 0 else after).append(d)
+        conf = 0.6
+        if before and after:
+            b, a = float(np.mean(before)), float(np.mean(after))
+            if b * a < 0 and abs(b - a) >= 3.0:
+                conf += 0.3          # 우세 반전 확인 = 강한 통과 증거
+            elif b * a > 0 and abs(b) > 3 and abs(a) > 3:
+                conf -= 0.2          # 한쪽이 끝까지 우세 = walk-by 의심
+        if min(r_a, r_b) < P.RSSI_FLOOR + 6:
+            conf -= 0.1              # 반대편 피크 미약
+        return round(min(0.95, max(0.2, conf)), 2)

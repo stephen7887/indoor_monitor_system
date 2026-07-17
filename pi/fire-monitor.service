@@ -1,0 +1,15 @@
+[Unit]
+Description=BLE Firefighter Entry/Exit Monitor
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/indoor_monitor_system/pi
+ExecStart=/home/pi/indoor_monitor_system/pi/venv/bin/python3 main.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
